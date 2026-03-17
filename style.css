@@ -1,0 +1,26 @@
+style.css
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at center, #0a0a0a, #000000);
+  color: white;
+  text-align: center;
+}
+
+.container {
+  margin-top: 20vh;
+}
+
+h1 {
+  font-size: 3em;
+  letter-spacing: 4px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 15px 30px;
+  border: none;
+  background: #00ffcc;
+  color: black;
+  cursor: pointer;
+}
