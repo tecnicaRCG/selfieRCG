@@ -83,32 +83,57 @@
 
   </div>
 
- <script>
-  let imagenSeleccionada = null;
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-  function mostrarImagen(event) {
-    const archivo = event.target.files[0];
-    if (archivo) {
-      const url = URL.createObjectURL(archivo);
-      document.getElementById('preview').src = url;
-      imagenSeleccionada = archivo;
-    }
+<script>
+const supabase = supabase.createClient(
+  'https://matfbytcvrtczlidobtn.supabase.co',
+  'sb_secret_o2yYSiju8tFFFz9RHmCrHw_5lBNs7A6'
+);
+
+let archivoGlobal = null;
+
+function mostrarImagen(event) {
+  const archivo = event.target.files[0];
+  if (archivo) {
+    archivoGlobal = archivo;
+    document.getElementById('preview').src = URL.createObjectURL(archivo);
+  }
+}
+
+async function subirImagen() {
+  if (!archivoGlobal) {
+    alert("Seleccioná una imagen");
+    return;
   }
 
-  function subirImagen() {
-    if (!imagenSeleccionada) {
-      alert("Seleccioná una imagen primero");
-      return;
-    }
+  const nombre = Date.now() + "_" + archivoGlobal.name;
 
-    alert("Simulación de subida 😈 (siguiente paso: servidor real)");
+  // subir a storage
+  const { data, error } = await supabase.storage
+    .from('selfies')
+    .upload(nombre, archivoGlobal);
 
-    // descarga para prueba
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(imagenSeleccionada);
-    link.download = "selfie_rcg.jpg";
-    link.click();
+  if (error) {
+    alert("Error al subir");
+    console.log(error);
+    return;
   }
+
+  // obtener URL pública
+  const { data: urlData } = supabase.storage
+    .from('selfies')
+    .getPublicUrl(nombre);
+
+  const url = urlData.publicUrl;
+
+  // guardar en tabla
+  await supabase.from('fotos').insert([
+    { url: url }
+  ]);
+
+  alert("🔥 Selfie subida!");
+}
 </script>
 
 </body>
