@@ -1,27 +1,82 @@
-</head>
-<meta charset="UTF-8">
-  <title>RCG LIVE</title>
-  <link rel="stylesheet" href="style.css">
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>RCG SELFIE CAM</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RCG LIVE</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0d0d0d;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 60px;
+      font-size: 48px;
+      letter-spacing: 5px;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+
+    input {
+      margin: 20px;
+    }
+
+    button {
+      background-color: #00ffcc;
+      border: none;
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #00ccaa;
+    }
+
+    #preview {
+      margin-top: 30px;
+      max-width: 90%;
+      border-radius: 10px;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="container">
   <h1>RCG LIVE</h1>
   <p>Subí tu selfie y aparecé en pantalla 🔥</p>
 
-  <input type="file" id="fileInput" accept="image/*" capture="user">
-  
-  <button onclick="upload()">SUBIR SELFIE</button>
+  <input type="file" accept="image/*" onchange="mostrarImagen(event)">
+  <br>
+  <button onclick="alert('Después conectamos esto a pantalla 😈')">
+    SUBIR SELFIE
+  </button>
 
-  <p id="status"></p>
-</div>
+  <div>
+    <img id="preview" src="" alt="">
+  </div>
 
-<script src="app.js"></script>
+  <script>
+    function mostrarImagen(event) {
+      const archivo = event.target.files[0];
+      if (archivo) {
+        const url = URL.createObjectURL(archivo);
+        document.getElementById('preview').src = url;
+      }
+    }
+  </script>
+
 </body>
 </html>
