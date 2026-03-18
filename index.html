@@ -73,9 +73,9 @@
     <input type="file" accept="image/*" capture="user" onchange="mostrarImagen(event)">
     <br>
 
-    <button onclick="alert('')">
-      SUBIR SELFIE
-    </button>
+   <button onclick="subirImagen()">
+  SUBIR SELFIE
+</button>
 
     <div>
       <img id="preview" src="">
@@ -83,15 +83,33 @@
 
   </div>
 
-  <script>
-    function mostrarImagen(event) {
-      const archivo = event.target.files[0];
-      if (archivo) {
-        const url = URL.createObjectURL(archivo);
-        document.getElementById('preview').src = url;
-      }
+ <script>
+  let imagenSeleccionada = null;
+
+  function mostrarImagen(event) {
+    const archivo = event.target.files[0];
+    if (archivo) {
+      const url = URL.createObjectURL(archivo);
+      document.getElementById('preview').src = url;
+      imagenSeleccionada = archivo;
     }
-  </script>
+  }
+
+  function subirImagen() {
+    if (!imagenSeleccionada) {
+      alert("Seleccioná una imagen primero");
+      return;
+    }
+
+    alert("Simulación de subida 😈 (siguiente paso: servidor real)");
+
+    // descarga para prueba
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(imagenSeleccionada);
+    link.download = "selfie_rcg.jpg";
+    link.click();
+  }
+</script>
 
 </body>
 </html>
