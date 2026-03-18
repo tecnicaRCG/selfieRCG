@@ -86,10 +86,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-const supabase = supabase.createClient(
-  'https://matfbytcvrtczlidobtn.supabase.co',
-  'sb_publishable_pN5MDGbDY9iUhLVpbslhBg_qguW-qAi'
-);
+const supabaseUrl = 'https://matfbytcvrtczlidobtn.supabase.co';
+const supabaseKey = 'sb_publishable_pN5MDGbDY9iUhLVpbslhBg_qguW-qAi'; // 
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 let archivoGlobal = null;
 
@@ -109,8 +109,7 @@ async function subirImagen() {
 
   const nombre = Date.now() + "_" + archivoGlobal.name;
 
-  // subir a storage
-  const { data, error } = await supabase.storage
+  const { data, error } = await supabaseClient.storage
     .from('selfies')
     .upload(nombre, archivoGlobal);
 
@@ -120,15 +119,13 @@ async function subirImagen() {
     return;
   }
 
-  // obtener URL pública
-  const { data: urlData } = supabase.storage
+  const { data: urlData } = supabaseClient.storage
     .from('selfies')
     .getPublicUrl(nombre);
 
   const url = urlData.publicUrl;
 
-  // guardar en tabla
-  await supabase.from('fotos').insert([
+  await supabaseClient.from('fotos').insert([
     { url: url }
   ]);
 
