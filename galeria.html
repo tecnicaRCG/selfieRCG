@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Galería RCG</title>
+
+  <style>
+    body {
+      background: black;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    img {
+      width: 200px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabase = supabase.createClient(
+  'https://matfbytcvrtczlidobtn.supabase.co',
+  'sb_publishable_pN5MDGbDY9iUhLVpbslhBg_qguW-qAi'
+);
+
+async function cargarFotos() {
+  const { data } = await supabase
+    .from('fotos')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  document.body.innerHTML = '';
+
+  data.forEach(foto => {
+    const img = document.createElement('img');
+    img.src = foto.url;
+    document.body.appendChild(img);
+  });
+}
+
+// refresco automático cada 3 segundos
+setInterval(cargarFotos, 3000);
+
+cargarFotos();
+</script>
+
+</body>
+</html>
