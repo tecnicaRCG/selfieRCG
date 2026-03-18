@@ -9,26 +9,34 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #0d0d0d;
-      color: white;
       font-family: Arial, sans-serif;
+      color: white;
       text-align: center;
+
+      background: url('fondo.jpg') no-repeat center center fixed;
+      background-size: cover;
     }
 
-    h1 {
-      margin-top: 60px;
-      font-size: 48px;
-      letter-spacing: 5px;
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.7);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .logo {
+      width: 200px;
+      margin-top: 40px;
     }
 
     p {
       font-size: 18px;
-      margin-bottom: 30px;
+      margin: 20px 0;
       color: #ccc;
     }
 
     input {
       margin: 20px;
+      color: white;
     }
 
     button {
@@ -49,23 +57,30 @@
       margin-top: 30px;
       max-width: 90%;
       border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.3);
     }
   </style>
 </head>
 
 <body>
 
-  <h1>RCG LIVE</h1>
-  <p>Subí tu selfie y aparecé en pantalla 🔥</p>
+  <div class="overlay">
 
-  <input type="file" accept="image/*" capture="environment" onchange="mostrarImagen(event)">
-  <br>
-  <button onclick="alert">
-    SUBIR SELFIE
-  </button>
+    <img src="logo.png" class="logo">
 
-  <div>
-    <img id="preview" src="" alt="">
+    <p>Subí tu selfie y aparecé en pantalla 🔥</p>
+
+    <input type="file" accept="image/*" capture="user" onchange="mostrarImagen(event)">
+    <br>
+
+    <button onclick="alert('')">
+      SUBIR SELFIE
+    </button>
+
+    <div>
+      <img id="preview" src="">
+    </div>
+
   </div>
 
   <script>
