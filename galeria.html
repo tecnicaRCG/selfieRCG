@@ -1,54 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Galería RCG</title>
+<meta charset="UTF-8">
+<title>RCG LIVE GALERÍA</title>
 
-  <style>
-    body {
-      background: black;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 10px;
-    }
+<style>
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+}
 
-    img {
-      width: 200px;
-      border-radius: 10px;
-    }
-  </style>
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>
 </head>
 
 <body>
 
+<div class="grid" id="galeria"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-const supabase = supabase.createClient(
-  'https://matfbytcvrtczlidobtn.supabase.co',
-  'sb_publishable_pN5MDGbDY9iUhLVpbslhBg_qguW-qAi'
-);
+const supabaseUrl = 'https://matfbytcvrtczlidobtn.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvcGpuZ2ZmeWRiYWdhZWJ6dWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MTIwNzgsImV4cCI6MjA4OTM4ODA3OH0.-MUNbeTkyO2aviWFW3yI8hfxzN9viKSVnJvmsVEnP-0';
 
-async function cargarFotos() {
-  const { data } = await supabase
-    .from('fotos')
-    .select('*')
-    .order('created_at', { ascending: false });
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  document.body.innerHTML = '';
+async function cargarGaleria() {
+  const { data } = await supabaseClient.storage
+    .from('selfies')
+    .list('', { limit: 50, sortBy: { column: 'created_at', order: 'desc' } });
 
-  data.forEach(foto => {
+  const contenedor = document.getElementById('galeria');
+  contenedor.innerHTML = '';
+
+  data.forEach(file => {
+    const { data: urlData } = supabaseClient.storage
+      .from('selfies')
+      .getPublicUrl(file.name);
+
     const img = document.createElement('img');
-    img.src = foto.url;
-    document.body.appendChild(img);
+    img.src = urlData.publicUrl;
+
+    contenedor.appendChild(img);
   });
 }
 
-// refresco automático cada 3 segundos
-setInterval(cargarFotos, 3000);
+// refresca cada 5 segundos
+setInterval(cargarGaleria, 5000);
 
-cargarFotos();
+cargarGaleria();
 </script>
 
 </body>
