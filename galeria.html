@@ -16,7 +16,7 @@ body {
   overflow: hidden;
 }
 
-/* PANTALLA CENTRAL */
+
 .viewer {
   width: 40vh;
   height: 71vh; /* 9:16 */
@@ -32,7 +32,7 @@ body {
   object-fit: cover;
 }
 
-/* DOCK */
+
 .dock {
   display: flex;
   align-items: flex-end;
@@ -43,7 +43,7 @@ body {
   backdrop-filter: blur(15px);
 }
 
-/* MINIATURAS */
+
 .thumb {
   width: 60px;
   height: 100px;
@@ -64,7 +64,7 @@ body {
 
 <script>
 const supabaseUrl = 'https://popjngffydbagaebzueq.supabase.co';
-const supabaseKey = 'TU_KEY';
+const supabaseKey = 'sb_publishable_hHy6tbYKnped4Z810lF2Kg_iSasCoe0';
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
@@ -122,7 +122,7 @@ async function cargarGaleria() {
   });
 }
 
-/* 🍎 EFECTO MAGNIFICACIÓN */
+
 document.addEventListener('mousemove', (e) => {
   thumbs.forEach(img => {
     const rect = img.getBoundingClientRect();
@@ -141,14 +141,14 @@ document.addEventListener('mousemove', (e) => {
   });
 });
 
-/* reset */
+
 document.getElementById('dock').addEventListener('mouseleave', () => {
   thumbs.forEach(img => {
     img.style.transform = 'scale(1)';
   });
 });
 
-/* auto refresh */
+
 setInterval(cargarGaleria, 5000);
 
 cargarGaleria();
