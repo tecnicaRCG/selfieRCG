@@ -2,63 +2,145 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>RCG LIVE GALERÍA</title>
+<title>RCG LIVE VIEWER PRO</title>
 
 <style>
 body {
   margin: 0;
   background: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
   overflow: hidden;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 10px;
-  padding: 10px;
+
+.viewer {
+  width: 40vh;
+  height: 71vh; /* 9:16 */
+  background: #000;
+  overflow: hidden;
+  margin-bottom: 30px;
 }
 
-img {
+.viewer img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+
+.dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 15px 25px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 25px;
+  backdrop-filter: blur(15px);
+}
+
+
+.thumb {
+  width: 60px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
 }
 </style>
 </head>
 
 <body>
 
-<div class="grid" id="galeria"></div>
+<div class="viewer">
+  <img id="mainImg">
+</div>
+
+<div class="dock" id="dock"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 const supabaseUrl = 'https://popjngffydbagaebzueq.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvcGpuZ2ZmeWRiYWdhZWJ6dWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MTIwNzgsImV4cCI6MjA4OTM4ODA3OH0.-MUNbeTkyO2aviWFW3yI8hfxzN9viKSVnJvmsVEnP-0';
+const supabaseKey = 'sb_publishable_hHy6tbYKnped4Z810lF2Kg_iSasCoe0';
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+let imagenActual = "";
+let thumbs = [];
 
 async function cargarGaleria() {
   const { data } = await supabaseClient.storage
     .from('selfies')
-    .list('', { limit: 50, sortBy: { column: 'created_at', order: 'desc' } });
+    .list('', { 
+      limit: 20, 
+      sortBy: { column: 'created_at', order: 'desc' } 
+    });
 
-  const contenedor = document.getElementById('galeria');
-  contenedor.innerHTML = '';
+  if (!data) return;
 
-  data.forEach(file => {
+  const dock = document.getElementById('dock');
+  dock.innerHTML = '';
+  thumbs = [];
+
+  data.forEach((file, index) => {
     const { data: urlData } = supabaseClient.storage
       .from('selfies')
       .getPublicUrl(file.name);
 
-    const img = document.createElement('img');
-    img.src = urlData.publicUrl;
+    const url = urlData.publicUrl;
 
-    contenedor.appendChild(img);
+    const img = document.createElement('img');
+    img.src = url;
+    img.classList.add('thumb');
+
+    img.onclick = () => {
+      document.getElementById('mainImg').src = url;
+      imagenActual = url;
+    };
+
+    dock.appendChild(img);
+    thumbs.push(img);
+
+    // imagen inicial
+    if (index === 0 && imagenActual === "") {
+      document.getElementById('mainImg').src = url;
+      imagenActual = url;
+    }
   });
 }
 
-// refresca cada 5 segundos
+
+document.addEventListener('mousemove', (e) => {
+  thumbs.forEach(img => {
+    const rect = img.getBoundingClientRect();
+    const center = rect.left + rect.width / 2;
+
+    const distance = Math.abs(e.clientX - center);
+
+    const maxDist = 150; // rango de efecto
+    let scale = 1;
+
+    if (distance < maxDist) {
+      scale = 1 + (1 - distance / maxDist) * 1.2;
+    }
+
+    img.style.transform = `scale(${scale})`;
+  });
+});
+
+
+document.querySelector('.dock').addEventListener('mouseleave', () => {
+  thumbs.forEach(img => {
+    img.style.transform = 'scale(1)';
+  });
+});
+
+
 setInterval(cargarGaleria, 5000);
 
 cargarGaleria();
